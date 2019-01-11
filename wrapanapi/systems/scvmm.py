@@ -3,7 +3,7 @@
 
 Used to communicate with providers without using CFME facilities
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import json
 import re
@@ -425,7 +425,7 @@ class SCVMMSystem(System, VmMixin, TemplateMixin):
             result = self.api.run_ps("{}\n\n{}".format(self.pre_script, script))
             if result.status_code == 0:
                 break
-            elif hasattr(result, 'std_err') and 'Error ID: 1600' in result.std_err:
+            elif hasattr(result, 'std_err') and b'Error ID: 1600' in result.std_err:
                 if attempt == num_tries:
                     self.logger.error("Retried %d times, giving up", num_tries)
                     _raise_for_result(result)
@@ -492,7 +492,7 @@ class SCVMMSystem(System, VmMixin, TemplateMixin):
         return matches[0]
 
     def list_templates(self):
-        templates = self.get_json("Get-SCVMTemplate -VMMServer $scvmm_server")
+        templates = self.get_json('Get-SCVMTemplate -VMMServer $scvmm_server')
         return [SCVMTemplate(system=self, raw=t) for t in templates]
 
     def find_templates(self, name):
